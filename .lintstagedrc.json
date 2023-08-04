@@ -1,0 +1,7 @@
+{
+  "*.js": [
+    "standard --fix",
+    "pnpm run test:staged",
+    "git add"
+  ]
+}
