@@ -1,4 +1,5 @@
 const MissingParamError = require('./helpers/missing-param-error')
+const UnauthorizedError = require('./helpers/unauthorized-error')
 const LoginRouter = require('./login-router')
 
 const makeSut = () => {
@@ -19,7 +20,7 @@ const makeSut = () => {
 }
 
 describe('Login Router', () => {
-  test('Should return 400 if no email is provided', () => {
+  test('Should return 400 if no email is provided', async () => {
     const { sut } = makeSut()
 
     const httpRequest = {
@@ -33,7 +34,7 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 
-  test('Should return 400 if no password is provided', () => {
+  test('Should return 400 if no password is provided', async () => {
     const { sut } = makeSut()
 
     const httpRequest = {
@@ -47,13 +48,23 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('password'))
   })
 
-  test('Should return 500 if no httpRequest is provided', () => {
+  test('Should return 500 if no httpRequest is provided', async () => {
     const { sut } = makeSut()
+
     const httpResponse = sut.route()
+
     expect(httpResponse.statusCode).toBe(500)
   })
 
-  test('Should call AuthUseCase with correct params', () => {
+  test('Should return 500 if httpRequest has no body', async () => {
+    const { sut } = makeSut()
+
+    const httpResponse = sut.route({})
+
+    expect(httpResponse.statusCode).toBe(500)
+  })
+
+  test('Should call AuthUseCase with correct params', async () => {
     const { sut, authUseCaseSpy } = makeSut()
 
     const httpRequest = {
@@ -64,11 +75,12 @@ describe('Login Router', () => {
     }
 
     sut.route(httpRequest)
+
     expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
     expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
   })
 
-  test('Should return 401 when invalid credentials are provided', () => {
+  test('Should return 401 when invalid credentials are provided', async () => {
     const { sut } = makeSut()
 
     const httpRequest = {
@@ -80,5 +92,6 @@ describe('Login Router', () => {
 
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(401)
+    expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
 })
