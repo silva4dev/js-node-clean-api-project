@@ -19,6 +19,7 @@ describe('Encrypter', () => {
   test('Should return false if bcrypt returns false', async () => {
     const sut = new Encrypter()
     bcrypt.isValid = false
+
     const isValid = await sut.compare('any_value', 'hashed_value')
 
     expect(isValid).toBe(false)
