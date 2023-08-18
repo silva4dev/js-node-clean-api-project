@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --silent --colors --noStackTrace --passWithNoTests",
+    "test": "jest --colors --noStackTrace --passWithNoTests",
     "test:unit": "pnpm test -- --watch -c jest-unit-config.js",
     "test:integration": "pnpm test -- --watch -c jest-integration-config.js",
-    "test:staged": "pnpm test -- --findRelatedTests",
-    "test:ci": "pnpm test -- --coverage"
+    "test:staged": "pnpm test -- --findRelatedTests --silent",
+    "test:ci": "pnpm test -- --coverage --silent"
   },
   "standard": {
     "env": [
