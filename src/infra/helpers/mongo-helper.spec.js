@@ -1,7 +1,7 @@
 const MongoHelper = require('./mongo-helper')
 
 describe('Mongo Helper', () => {
-  it('Should reconnect when getDb() is invoked and client is disconnected', async () => {
+  test('Should reconnect when getDb() is invoked and client is disconnected', async () => {
     const sut = MongoHelper
     await sut.connect(process.env.MONGO_URL)
 
