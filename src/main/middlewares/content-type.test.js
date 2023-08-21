@@ -1,7 +1,13 @@
-const { app } = require('../config')
 const request = require('supertest')
 
 describe('Content-Type Middleware', () => {
+  let app
+
+  beforeEach(() => {
+    app = require('../config/app')
+    jest.resetModules()
+  })
+
   test('Should return json content-type as default', async () => {
     app.get('/test_content_type', (request, response) => {
       response.send('')
@@ -13,13 +19,13 @@ describe('Content-Type Middleware', () => {
   })
 
   test('Should return xml content-type if forced', async () => {
-    app.get('/test_content_type_xml', (request, response) => {
+    app.get('/test_content_type', (request, response) => {
       response.type('xml')
       response.send('')
     })
 
     await request(app)
-      .get('/test_content_type_xml')
+      .get('/test_content_type')
       .expect('content-type', /xml/)
   })
 })
