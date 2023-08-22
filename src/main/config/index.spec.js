@@ -1,5 +1,6 @@
 const app = require('./app')
 const setupApp = require('./setup')
+const env = require('./env')
 
 describe('Index', () => {
   test('Should export dependencies', () => {
@@ -7,7 +8,8 @@ describe('Index', () => {
 
     expect(index).toEqual({
       app,
-      setupApp
+      setupApp,
+      env
     })
   })
 })
