@@ -222,7 +222,7 @@ describe('Auth UseCase', () => {
         loadUserByEmailRepository,
         encrypter,
         tokenGenerator,
-        updateUserByEmailRepository: invalid
+        updateAccessTokenRepository: invalid
       })
     )
     for (const sut of suts) {

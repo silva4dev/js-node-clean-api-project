@@ -1,37 +1,45 @@
-const validator = require('validator')
-const { MissingParamError } = require('../errors')
-const EmailValidator = require('./email-validator')
+jest.mock('bcrypt', () => ({
+  isValid: true,
+
+  async compare (value, hash) {
+    this.value = value
+    this.hash = hash
+    return this.isValid
+  }
+}))
+
+const bcrypt = require('bcrypt')
+const MissingParamError = require('../errors/missing-param-error')
+const Encrypter = require('./encrypter')
 
 const makeSut = () => {
-  return new EmailValidator()
+  return new Encrypter()
 }
 
-describe('Email Validator', () => {
-  test('Should return true if validator returns true', () => {
+describe('Encrypter', () => {
+  test('Should return true if bcrypt returns true', async () => {
     const sut = makeSut()
-    const isEmailValid = sut.isValid('valid_email@mail.com')
-
-    expect(isEmailValid).toBe(true)
+    const isValid = await sut.compare('any_value', 'hashed_value')
+    expect(isValid).toBe(true)
   })
 
-  test('Should return false if validator returns false', () => {
-    validator.isEmailValid = false
+  test('Should return false if bcrypt returns false', async () => {
     const sut = makeSut()
-    const isEmailValid = sut.isValid('invalid_email@mail.com')
-
-    expect(isEmailValid).toBe(false)
+    bcrypt.isValid = false
+    const isValid = await sut.compare('any_value', 'hashed_value')
+    expect(isValid).toBe(false)
   })
 
-  test('Should call validator with correct email', () => {
+  test('Should call bcrypt with correct values', async () => {
     const sut = makeSut()
-    sut.isValid('any_email@mail.com')
-
-    expect(validator.email).toBe('any_email@mail.com')
+    await sut.compare('any_value', 'hashed_value')
+    expect(bcrypt.value).toBe('any_value')
+    expect(bcrypt.hash).toBe('hashed_value')
   })
 
-  test('Should throw if no email is provided', async () => {
+  test('Should throw if no params are provided', async () => {
     const sut = makeSut()
-
-    expect(() => { sut.isValid() }).toThrow(new MissingParamError('email'))
+    expect(sut.compare()).rejects.toThrow(new MissingParamError('value'))
+    expect(sut.compare('any_value')).rejects.toThrow(new MissingParamError('hash'))
   })
 })
